@@ -23,6 +23,17 @@ class WeixinController extends Controller
         file_put_contents("logs/wx_valid.log", $str, FILE_APPEND);
         $wx_id = $obj->ToUserName;  //开发者微信号
         $openid = $obj->FromUserName; //用户的openid
+        $type = $obj->MsgType;
+        if($type=='text') {
+            $font = $obj->Content;
+            $time = $obj->CreateTime;
+            $info = [
+                'openid' => $openid,
+                'create_time' => $time,
+                'font' => $font
+            ];
+            $id = WxText::insertGetId($info);
+        }
         $event = $obj->Event;
         if ($event == 'subscribe') {
             $userInfo = wxUser::where(['openid'=>$openid])->first();
