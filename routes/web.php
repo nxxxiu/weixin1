@@ -22,9 +22,8 @@ Route::get('/phpinfo', function () {
 //微信接口
 Route::get('/weixin/valid','WeixinController@valid');//原样返回echostr 第一次get请求
 Route::post('/weixin/valid','WeixinController@wxvalid');//接收微信的推送事件 post
-Route::any('/weixin/accessToken','WeixinController@accessToken');//获取微信accesstoken
+Route::get('/weixin/accessToken','WeixinController@accessToken');//获取微信accesstoken
 Route::any('/weixin/test','WeixinController@test');
-Route::any('/weixin/responseMsg','WeixinController@responseMsg');
-Route::any('/weixin/create_menu','WeixinController@create_menu');//创建微信菜单
-Route::any('/weixin/sendMsg','WeixinController@sendMsg');//微信群发
-Route::any('/weixin/send','WeixinController@send');
+Route::get('/weixin/create_menu','WeixinController@create_menu');//创建微信菜单
+Route::get('/weixin/sendMsg','WeixinController@sendMsg');//微信群发
+Route::get('/weixin/send','WeixinController@send');//微信群发
