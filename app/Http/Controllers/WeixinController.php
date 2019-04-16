@@ -68,7 +68,7 @@ class WeixinController extends Controller
                     $wind_dir=$arr['HeWeather6'][0]['now']['wind_dir']; //风向
                     $wind_sc=$arr['HeWeather6'][0]['now']['wind_sc']; //风力
                     $hum=$arr['HeWeather6'][0]['now']['hum'];//湿度
-                    $str="城市：".$city."\n"."温度：".$fl."\n"."风向：".$wind_dir."\n"."风力：".$wind_sc."\n"."湿度：".$hum."\n";
+                    $str="城市：".$city."\n"."温度：".$fl."°C"."\n"."风向：".$wind_dir."\n"."风力：".$wind_sc."级"."\n"."湿度：".$hum."\n";
 //                print_r($str);
                     $response_xml='<xml>
                                     <ToUserName><![CDATA['.$openid.']]></ToUserName>
@@ -125,7 +125,9 @@ class WeixinController extends Controller
             $voice=$client->get(new Uri($url));
             //获取文件类型
             $headers=$voice->getHeaders();
-            $voice_name=$headers['Content-disposition'][0];
+//            echo "<pre>";print_r($headers);echo "</pre>";die;
+            $voice_name=$headers['Content-disposition'][0];//文件名
+//            print_r($voice_name);die;
             $fileInfo=substr($voice_name,'-15');
             $voice_name=substr(md5(time().mt_rand(1111,9999)),5,8).$fileInfo;
             $voice_name=rtrim($voice_name,'"');
