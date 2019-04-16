@@ -271,6 +271,6 @@ class WeixinController extends Controller
 //        print_r($openid_arr);echo "<br>";die;
         $msg="Everybody, show time~";
         $response=$this->sendMsg($openid_arr,$msg);
-//        echo $response;die;
+        echo $response;die;
     }
 }
