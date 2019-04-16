@@ -54,20 +54,32 @@ class WeixinController extends Controller
                 $url='https://free-api.heweather.net/s6/weather/now?key=HE1904161027181313&location='.$city;
                 $arr=json_decode(file_get_contents($url),true);
 //                echo '<pre>';print_r($arr);echo '</pre>';
-                $fl=$arr['HeWeather6'][0]['now']['fl']; //体感温度
-                $wind_dir=$arr['HeWeather6'][0]['now']['wind_dir']; //风向
-                $wind_sc=$arr['HeWeather6'][0]['now']['wind_sc']; //风力
-                $hum=$arr['HeWeather6'][0]['now']['hum'];//湿度
-                $str="温度：".$fl."\n"."风向：".$wind_dir."\n"."风力：".$wind_sc."\n"."湿度：".$hum."\n";
+                if ($arr['HeWeather6'][0]['status']!=='ok'){
+                    echo "<xml>
+                                    <ToUserName><![CDATA['.$openid.']]></ToUserName>
+                                    <FromUserName><![CDATA['.$wx_id.']]></FromUserName>
+                                    <CreateTime>.time().</CreateTime>
+                                    <MsgType><![CDATA[text]]></MsgType>
+                                    <Content><![CDATA[城市信息有误]]></Content>
+                                </xml>";
+                }else{
+                    $city=$arr['HeWeather6'][0]['basic']['parent_city']; //城市
+                    $fl=$arr['HeWeather6'][0]['now']['fl']; //体感温度
+                    $wind_dir=$arr['HeWeather6'][0]['now']['wind_dir']; //风向
+                    $wind_sc=$arr['HeWeather6'][0]['now']['wind_sc']; //风力
+                    $hum=$arr['HeWeather6'][0]['now']['hum'];//湿度
+                    $str="城市：".$city."\n"."温度：".$fl."\n"."风向：".$wind_dir."\n"."风力：".$wind_sc."\n"."湿度：".$hum."\n";
 //                print_r($str);
-                $response_xml='<xml>
+                    $response_xml='<xml>
                                     <ToUserName><![CDATA['.$openid.']]></ToUserName>
                                     <FromUserName><![CDATA['.$wx_id.']]></FromUserName>
                                     <CreateTime>.time().</CreateTime>
                                     <MsgType><![CDATA[text]]></MsgType>
                                     <Content><![CDATA['.$str.']]></Content>
                                 </xml>';
-                echo $response_xml;
+                    echo $response_xml;
+                }
+
             }
         } elseif($type=='image') {//图片
             $font = $obj->Content;
