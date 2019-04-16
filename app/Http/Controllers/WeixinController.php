@@ -3,7 +3,7 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Http\Request;
 use GuzzleHttp\Client;
-use App\WxUser;
+use App\wxUser;
 use App\WxText;
 use GuzzleHttp\Psr7\Uri;
 use Illuminate\Support\Facades\DB;
@@ -46,7 +46,7 @@ class WeixinController extends Controller
             ];
             $id = WxText::insertGetId($info);
         }
-
+        //图片
         if($type=='image') {
             $font = $obj->Content;
             $time = $obj->CreateTime;
@@ -83,6 +83,41 @@ class WeixinController extends Controller
             }
             // $imgname=time().rand(11111,99999).'.jpg';
             // file_put_contents('wx/img/'.$imgname,$img);
+        }
+
+        //语音
+        if($type=='voice'){
+            $font=$obj->Content;
+            $time=$obj->CreateTime;
+            $media_id=$obj->MediaId;
+            $url="https://api.weixin.qq.com/cgi-bin/media/get?access_token=".$this->access_token()."&media_id=".$media_id;
+            $voice=$client->get(new Uri($url));
+            //获取文件类型
+            $headers=$voice->getHeaders();
+            $voice_name=$headers['Content-disposition'][0];
+            $fileInfo=substr($voice_name,'-15');
+            $voice_name=substr(md5(time().mt_rand(1111,9999)),5,8).$fileInfo;
+            $voice_name=rtrim($voice_name,'"');
+            //保存文件
+            $res=Storage::put('weixin/voice/'.$voice_name, $voice->getBody());
+            if($res=='1'){
+                //文件路径入库
+                $data=[
+                    'type'=>'voice',
+                    'openid'=>$openid,
+                    'create_time'=>$time,
+                    'font'=>$voice_name
+                ];
+                $id=WxText::insertGetId($data);
+                if(!$data){
+                    Storage::delete('weixin/voice/'.$voice_name);
+                    echo "添加失败";
+                }else{
+                    echo "添加成功";
+                }
+            }else{
+                echo "添加失败";
+            }
         }
 
         if ($event == 'subscribe') {
