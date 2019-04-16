@@ -244,4 +244,33 @@ class WeixinController extends Controller
             echo "创建菜单成功";
         }
     }
+
+    //根据openid消息群发
+    public function sendMsg($openid_arr,$content){
+        $msg=[
+            "touser"=>$openid_arr,
+            "msgtype"=>"text",
+            "text"=>[
+                "content" => $content
+            ]
+        ];
+        $data=json_encode($msg,JSON_UNESCAPED_UNICODE);
+        $url='https://api.weixin.qq.com/cgi-bin/message/mass/send?access_token='.$this->accessToken();
+        $client=new Client();
+        $response=$client->request('POST',$url,[
+            'body'=>$data
+        ]);
+//        echo $response->getBody();
+        return $response->getBody();
+    }
+
+    public function send(){
+        $user_list=wxUser::all()->toArray();
+//        print_r($user_list);echo "<br>";die;
+        $openid_arr=array_column($user_list,'openid');
+//        print_r($openid_arr);echo "<br>";die;
+        $msg="嘿哈~";
+        $response=$this->sendMsg($openid_arr,$msg);
+//        echo $response;die;
+    }
 }

@@ -26,3 +26,5 @@ Route::any('/weixin/accessToken','WeixinController@accessToken');//获取微信a
 Route::any('/weixin/test','WeixinController@test');
 Route::any('/weixin/responseMsg','WeixinController@responseMsg');
 Route::any('/weixin/create_menu','WeixinController@create_menu');//创建微信菜单
+Route::any('/weixin/sendMsg','WeixinController@sendMsg');//微信群发
+Route::any('/weixin/send','WeixinController@send');
