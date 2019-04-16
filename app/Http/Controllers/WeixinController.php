@@ -33,9 +33,9 @@ class WeixinController extends Controller
         $openid = $obj->FromUserName; //用户的openid
 //        print_r($openid);die;
         $type = $obj->MsgType;
-        $event = $obj->Event; //事件类型
+
         //消息类型
-        if($type=='text') {
+        if($type=='text') {//文本
             $font = $obj->Content;
             $time = $obj->CreateTime;
             $info = [
@@ -45,9 +45,7 @@ class WeixinController extends Controller
                 'font' => $font
             ];
             $id = WxText::insertGetId($info);
-        }
-        //图片
-        if($type=='image') {
+        } elseif($type=='image') {//图片
             $font = $obj->Content;
             $time = $obj->CreateTime;
             $media_id = $obj->MediaId;
@@ -83,10 +81,7 @@ class WeixinController extends Controller
             }
             // $imgname=time().rand(11111,99999).'.jpg';
             // file_put_contents('wx/img/'.$imgname,$img);
-        }
-
-        //语音
-        if($type=='voice'){
+        } elseif($type=='voice'){//语音
             $font=$obj->Content;
             $time=$obj->CreateTime;
             $media_id=$obj->MediaId;
@@ -118,32 +113,31 @@ class WeixinController extends Controller
             }else{
                 echo "添加失败";
             }
-        }
-
-        if ($event == 'subscribe') {
-            $userInfo = wxUser::where(['openid'=>$openid])->first();
-            if ($userInfo) {
-                echo '<xml><ToUserName><![CDATA['.$openid.']]></ToUserName><FromUserName><![CDATA['.$wx_id.']]></FromUserName><CreateTime>'.time().'</CreateTime><MsgType><![CDATA[text]]></MsgType><Content><![CDATA['. '欢迎回来 '. $userInfo['nickname'] .']]></Content></xml>';
-            } else {
-                $u = $this->WxUserTail($obj->FromUserName);
-                //用户信息入库
-                $data=[
-                    'openid'=>$u['openid'],
-                    'nickname'=>$u['nickname'],
-                    'sex'=>$u['sex'],
-                    'city'=>$u['city'],
-                    'province'=>$u['province'],
-                    'country'=>$u['country'],
-                    'headimgurl'=>$u['headimgurl'],
-                    'subscribe_time'=>$u['subscribe_time'],
-                    'subscribe_scene'=>$u['subscribe_scene']
-                ];
-                $res = wxUser::insert($data);
-                echo '<xml><ToUserName><![CDATA['.$openid.']]></ToUserName><FromUserName><![CDATA['.$wx_id.']]></FromUserName><CreateTime>'.time().'</CreateTime><MsgType><![CDATA[text]]></MsgType><Content><![CDATA['. '欢迎关注 '. $u['nickname'] .']]></Content></xml>';
+        }elseif($type == 'event') {
+            $event = $obj->Event; //事件类型
+            if ($event == 'subscribe') {
+                $userInfo = wxUser::where(['openid'=>$openid])->first();
+                if ($userInfo) {
+                    echo '<xml><ToUserName><![CDATA['.$openid.']]></ToUserName><FromUserName><![CDATA['.$wx_id.']]></FromUserName><CreateTime>'.time().'</CreateTime><MsgType><![CDATA[text]]></MsgType><Content><![CDATA['. '欢迎回来 '. $userInfo['nickname'] .']]></Content></xml>';
+                } else {
+                    $u = $this->WxUserTail($openid);
+                    //用户信息入库
+                    $data=[
+                        'openid'=>$u['openid'],
+                        'nickname'=>$u['nickname'],
+                        'sex'=>$u['sex'],
+                        'city'=>$u['city'],
+                        'province'=>$u['province'],
+                        'country'=>$u['country'],
+                        'headimgurl'=>$u['headimgurl'],
+                        'subscribe_time'=>$u['subscribe_time'],
+                        'subscribe_scene'=>$u['subscribe_scene']
+                    ];
+                    $res = wxUser::insert($data);
+                    echo '<xml><ToUserName><![CDATA['.$openid.']]></ToUserName><FromUserName><![CDATA['.$wx_id.']]></FromUserName><CreateTime>'.time().'</CreateTime><MsgType><![CDATA[text]]></MsgType><Content><![CDATA['. '欢迎关注 '. $u['nickname'] .']]></Content></xml>';
+                }
             }
         }
-
-//        file_put_contents("/tmp/aaa.log",1111,FILE_APPEND);
     }
 
     /**获取微信 AccessToren */
