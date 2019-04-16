@@ -121,7 +121,7 @@ class WeixinController extends Controller
             $font=$obj->Content;
             $time=$obj->CreateTime;
             $media_id=$obj->MediaId;
-            $url="https://api.weixin.qq.com/cgi-bin/media/get?access_token=".$this->access_token()."&media_id=".$media_id;
+            $url="https://api.weixin.qq.com/cgi-bin/media/get?access_token=".$this->accessToken()."&media_id=".$media_id;
             $voice=$client->get(new Uri($url));
             //获取文件类型
             $headers=$voice->getHeaders();
