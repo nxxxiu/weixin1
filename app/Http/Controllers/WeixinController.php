@@ -45,6 +45,30 @@ class WeixinController extends Controller
                 'font' => $font
             ];
             $id = WxText::insertGetId($info);
+            //自动回复天气
+            if (strpos($obj->Content,'+天气')){
+//                echo $obj->Content;echo '<br>';
+                //获取城市名
+                $city=explode('+',$obj->Content)[0];
+//                echo 'City:'.$city;
+                $url='https://free-api.heweather.net/s6/weather/now?key=HE1904161027181313&location='.$city;
+                $arr=json_decode(file_get_contents($url),true);
+//                echo '<pre>';print_r($arr);echo '</pre>';
+                $fl=$arr['HeWeather6'][0]['now']['fl']; //体感温度
+                $wind_dir=$arr['HeWeather6'][0]['now']['wind_dir']; //风向
+                $wind_sc=$arr['HeWeather6'][0]['now']['wind_sc']; //风力
+                $hum=$arr['HeWeather6'][0]['now']['hum'];//湿度
+                $str="温度：".$fl."\n"."风向：".$wind_dir."\n"."风力：".$wind_sc."\n"."湿度：".$hum."\n";
+//                print_r($str);
+                $response_xml='<xml>
+                                    <ToUserName><![CDATA['.$openid.']]></ToUserName>
+                                    <FromUserName><![CDATA['.$wx_id.']]></FromUserName>
+                                    <CreateTime>.time().</CreateTime>
+                                    <MsgType><![CDATA[text]]></MsgType>
+                                    <Content><![CDATA['.$str.']]></Content>
+                                </xml>';
+                echo $response_xml;
+            }
         } elseif($type=='image') {//图片
             $font = $obj->Content;
             $time = $obj->CreateTime;
@@ -118,9 +142,12 @@ class WeixinController extends Controller
             if ($event == 'subscribe') {
                 $userInfo = wxUser::where(['openid'=>$openid])->first();
                 if ($userInfo) {
+//                    dd('m');
                     echo '<xml><ToUserName><![CDATA['.$openid.']]></ToUserName><FromUserName><![CDATA['.$wx_id.']]></FromUserName><CreateTime>'.time().'</CreateTime><MsgType><![CDATA[text]]></MsgType><Content><![CDATA['. '欢迎回来 '. $userInfo['nickname'] .']]></Content></xml>';
                 } else {
+//                    dd('hh');
                     $u = $this->WxUserTail($openid);
+//                    dd($u);
                     //用户信息入库
                     $data=[
                         'openid'=>$u['openid'],
@@ -143,19 +170,21 @@ class WeixinController extends Controller
     /**获取微信 AccessToren */
     public function accessToken()
     {
-        $url = 'https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=' . env('APPID') . '&secret=' . env('APPSECRET');
+        //先获取缓存，如果不存在请求接口
+        $redis_key='wx_access_token';
+        $token=Redis::get($redis_key);
+        if (!$token){
+            $url='https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=' . env('APPID') . '&secret=' . env('APPSECRET');
 //        echo $url;die;
-        $response = file_get_contents($url);
-//         echo $response;die;
-        $key = 'wx_access_token';
-        Cache::get($key);
-        // dd(Cache::get($key));
-        // Cache::forget($key);
-        $arr = json_decode($response, true);
-        // dd($arr['access_token']);
-        Cache::put($key, $arr['access_token'], 3600);
-        // print_R($arr);
-        return $arr['access_token'];
+            $json_str=file_get_contents($url);
+//        print_r($json_str);die;
+            $arr=json_decode($json_str,true);
+//            print_r($arr);die;
+            $redis_key='wx_access_token';
+            Redis::set($redis_key,$arr['access_token']);
+            Redis::expire($redis_key,3600);
+        }
+        return $token;
     }
 
 //    public  function test(){
@@ -165,7 +194,8 @@ class WeixinController extends Controller
 
     public function WxUserTail($openid)
     {
-        $data = file_get_contents("https://api.weixin.qq.com/cgi-bin/user/info?accessToken=" . $this->accessToken() . "&openid=" . $openid . "&lang=zh_CN");
+        $data = file_get_contents("https://api.weixin.qq.com/cgi-bin/user/info?access_token=" . $this->accessToken() . "&openid=" . $openid . "&lang=zh_CN");
+//        print_r("https://api.weixin.qq.com/cgi-bin/user/info?accessToken=" . $this->accessToken() . "&openid=" . $openid . "&lang=zh_CN");die;
         $arr = json_decode($data, true);
         return $arr;
     }
