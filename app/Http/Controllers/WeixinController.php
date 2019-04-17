@@ -107,7 +107,7 @@ class WeixinController extends Controller
                 ];
                 $id = WxText::insertGetId($data);
                 if (!$data) {
-                    Storage::delete('weixin/img/' . $img_name);
+                Storage::delete('weixin/img/' . $img_name);
                     echo "添加失败";
                 } else {
                     echo "添加成功";
@@ -269,7 +269,7 @@ class WeixinController extends Controller
 //        print_r($user_list);echo "<br>";die;
         $openid_arr=array_column($user_list,'openid');
 //        print_r($openid_arr);echo "<br>";die;
-        $msg="stttttttttt";
+        $msg="hi~";
         $response=$this->sendMsg($openid_arr,$msg);
         echo $response;die;
     }
