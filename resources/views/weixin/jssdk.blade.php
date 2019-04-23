@@ -53,7 +53,7 @@
                         })
 
                         $.ajax({
-                            url : '/jssdk/getImg?img='+img,     //将上传的照片id发送给后端
+                            url : '/jssdk/getimg?img='+img,     //将上传的照片id发送给后端
                             type: 'get',
                             success:function(d){
                                 console.log(d);
