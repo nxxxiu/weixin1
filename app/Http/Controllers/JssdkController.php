@@ -28,12 +28,16 @@ class JssdkController extends Controller
             'timestamp'=>$timestamp,
             'nonceStr'=>$nonceStr,//随机字符串
             'signature'=>$sign,//签名
-            'jsApiList'=>['chooseImage'],//要使用的功能列表
         ];
         $data=[
             'jsconfig'=>$js_config
         ];
         return view('weixin.jssdk',$data);
 
+    }
+
+    public function getimg()
+    {
+        echo '<pre>';print_r($_GET);echo '</pre>';
     }
 }
