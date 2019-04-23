@@ -35,6 +35,7 @@
                     sourceType: ['album', 'camera'], // 可以指定来源是相册还是相机，默认二者都有
                     success: function (res) {
                         var localIds = res.localIds; // 返回选定照片的本地ID列表，localId可以作为img标签的src属性显示图片
+                        var img = "";
                         $.each(localIds,function (i,v) {
                             img += v+',';
                             var node = "#imgs"+i;
