@@ -201,11 +201,6 @@ class WeixinController extends Controller
         return $token;
     }
 
-//    public  function test(){
-//        $access_token=$this->accessToken();
-//        echo $access_token;
-//    }
-
     public function WxUserTail($openid)
     {
         $data = file_get_contents("https://api.weixin.qq.com/cgi-bin/user/info?access_token=" . $this->accessToken() . "&openid=" . $openid . "&lang=zh_CN");
