@@ -8,6 +8,14 @@
     <title>Document</title>
 </head>
 <body>
+    <button id="btn1">选择照片</button>
+
+    <img src="" alt="" id="imgs0" width="300">
+    <hr>
+    <img src="" alt="" id="imgs1"  width="300">
+    <hr>
+    <img src="" alt="" id="imgs2"  width="300">
+    
     <script src="/js/jquery/jquery-3.2.1.min.js"></script>
     <script src="http://res2.wx.qq.com/open/js/jweixin-1.4.0.js"></script>
     <script>
