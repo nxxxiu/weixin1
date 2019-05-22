@@ -34,4 +34,5 @@ Route::post('/wxpay/notify','WxpayController@notify');//微信支付回调地址
 
 //JS-SDK
 Route::get('/jssdk/jstest','JssdkController@jstest');
-Route::get('jssdk/getimg', 'JssdkController@getimg');//获取JSSDK上传的照片
+Route::get('/jssdk/getimg', 'JssdkController@getimg');//获取JSSDK上传的图片
+Route::get('/jssdk/download', 'JssdkController@download');//下载图片
