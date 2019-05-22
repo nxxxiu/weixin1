@@ -272,12 +272,9 @@ class WeixinController extends Controller
     //群发
     public function sendd(){
         $url='https://api.weixin.qq.com/cgi-bin/message/mass/send?access_token='.getWxAccessToken();
-        $openid=wxUser::get();
-        if($openid){
-            $openid=$openid->toArray();
-        }
+        $openid=wxUser::get()->toArray();
         $openid=array_column($openid,'openid');
-        $array=[
+        $arr1=[
             '这世界要是没有爱情，它在我们心中还会有什么意义！这就如一盏没有亮光的走马灯。 —— 歌德',
             '爱情原如树叶一样，在人忽视里绿了，在忍耐里露出蓓蕾。 —— 何其芳',
             '爱情只有当它是自由自在时，才会叶茂花繁。认为爱情是某种义务的思想只能置爱情于死地。只消一句话：你应当爱某个人，就足以使你对这个人恨之入骨。 —— 罗素',
@@ -289,8 +286,8 @@ class WeixinController extends Controller
             '成功的秘诀，在永不改变既定的目的。 —— 卢梭',
             '忠诚可以简练地定义为对不可能的情况的一种不合逻辑的信仰。 —— 门肯'
         ];
-        $num=array_rand($array);
-        $con=$array[$num].date('Y-m-d H:i:s');
+        $text=array_rand($arr1);
+        $con=$arr1[$text].date('Y-m-d H:i:s');
         $arr=[
             'touser'=>[
                 $openid
