@@ -26,6 +26,7 @@ Route::get('/weixin/accessToken','WeixinController@accessToken');//获取微信a
 Route::get('/weixin/create_menu','WeixinController@create_menu');//创建微信菜单
 Route::get('/weixin/sendMsg','WeixinController@sendMsg');//微信群发
 Route::get('/weixin/send','WeixinController@send');//微信群发
+Route::get('/weixin/sendd','WeixinController@sendd');//微信群发
 
 //微信支付
 Route::get('/wxpay/test','WxpayController@test');//消息群发
